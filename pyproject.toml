@@ -1,0 +1,23 @@
+[project]
+name = "my-user-bot"
+version = "0.2.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "MypKANTI", email = "mypkanti@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "pytest>=9.2.0",
+    "pytubefix>=11.2.1",
+    "qrcode>=8.2",
+    "telethon>=1.45.0",
+    "translit-rs>=0.8.2",
+]
+
+[project.scripts]
+my-user-bot = "my_user_bot:main"
+
+[build-system]
+requires = ["uv_build>=0.12.7,<0.13.0"]
+build-backend = "uv_build"

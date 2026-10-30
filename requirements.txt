@@ -1,0 +1,5 @@
+pytest>=9.2.0
+pytubefix>=11.2.1
+telethon>=1.45.0
+translit-rs>=0.8.2
+qrcode>=8.2
