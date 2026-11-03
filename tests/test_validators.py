@@ -1,13 +1,16 @@
 import pytest
 
-from downloader.check_url import ValidURL
+from app.utils.validators import ValidURL
 
 
 @pytest.mark.parametrize("url, expected_result",[
     ("https://youtu.be/oQjLZC6pScs?si=lFkPZdoH0N7L180l", True),
     ("http://youtu.be/oQjLZC6pScs?si=lFkPZdoH0N7L180l", True),
     ("https:youtu.be/oQjLZC6pScs?si=lFkPZdoH0N7L180l", False),
-    ("youtu.be/oQjLZC6pScs?si=lFkPZdoH0N7L180l", False),
+    ("https//youtu.be/oQjLZC6pScs?si=lFkPZdoH0N7L180l", False),
+    ("ttps//youtu.be/oQjLZC6pScs?si=lFkPZdoH0N7L180l", False),
+    ("https//youtu.be/oQjLZC6pScs?si=lFkPZdoH0N7L180l", False),
+    ("https//google.com/oQjLZC6pScs?si=lFkPZdoH0N7L180l", False),
 ])
 def test_http_or_https(url: str, expected_result: bool) -> None:
     assert ValidURL(url).http_or_https() == expected_result
