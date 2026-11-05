@@ -194,19 +194,6 @@ wheels = [
 ]
 
 [[package]]
-name = "disarm"
-version = "0.17.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/94/8f/41fe18d8e05e29c3fde622c1300622b15009b97740e971ab892986f4b383/disarm-0.17.2.tar.gz", hash = "sha256:f5775126e71fd7fb2ed9cdc4b1e888f6330f71d49bf471fac3380fdc7fd97a8b", size = 1036227, upload-time = "2026-09-26T16:05:41.367Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/05/92/666c685b0ed7f24dff719cde60b09fa0f59fc3d927f2413f291fbd76feec/disarm-0.17.2-cp310-abi3-macosx_10_12_x86_64.whl", hash = "sha256:a902a8b7d18c503e41771148ba79ab73da75b5ee72c32932a7b6fd4f6643f0f9", size = 1860132, upload-time = "2026-09-26T16:05:32.551Z" },
-    { url = "https://files.pythonhosted.org/packages/a0/04/69d4123bb69916cb78cd7d1b60885fa3847f29e33cff1154aaee0abb9313/disarm-0.17.2-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:893996ed03c41f2a7af1cbed9cc3eeb721e4c25dbbf34607635fe3b394ba6eb7", size = 1808794, upload-time = "2026-09-26T16:05:34.655Z" },
-    { url = "https://files.pythonhosted.org/packages/49/7e/ef0ac3438e8673b1ac4448a5c9dceb970b6bdf2fc4835ec63499b5825097/disarm-0.17.2-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0b4c7257d4a1dcd5b44a51668bbaf5c3b1b0aac1f8cee3cbc4a445936c7db398", size = 1911706, upload-time = "2026-09-26T16:05:36.53Z" },
-    { url = "https://files.pythonhosted.org/packages/4f/54/bc42406fd536af6cd3cf79a67bc05d0b45c9d2b117f0b8ed695873d0adfe/disarm-0.17.2-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6fbe3668a2151d46e3e55a86e54330465d245c9116e3101037f9f2725557cea3", size = 1962102, upload-time = "2026-09-26T16:05:38.153Z" },
-    { url = "https://files.pythonhosted.org/packages/bc/fe/7bcf4ff79bef897a0711d849c3484b7455c1a253b543e89afd5f46374635/disarm-0.17.2-cp310-abi3-win_amd64.whl", hash = "sha256:93835bd9f5b4bdbc425e1ae4a8b902289d1d13bdb28a54791005b9f02ab2fc6c", size = 1877271, upload-time = "2026-09-26T16:05:39.729Z" },
-]
-
-[[package]]
 name = "frozenlist"
 version = "1.8.0"
 source = { registry = "https://pypi.org/simple" }
@@ -461,7 +448,6 @@ dependencies = [
     { name = "pytubefix" },
     { name = "qrcode" },
     { name = "telethon" },
-    { name = "translit-rs" },
 ]
 
 [package.metadata]
@@ -471,7 +457,6 @@ requires-dist = [
     { name = "pytubefix", specifier = ">=11.2.1" },
     { name = "qrcode", specifier = ">=8.2" },
     { name = "telethon", specifier = ">=1.45.0" },
-    { name = "translit-rs", specifier = ">=0.8.2" },
 ]
 
 [[package]]
@@ -828,18 +813,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/d5/07/b23b6cc73cd994763fbd641d196904f56cc966035eda841275b5689c6e5f/telethon-1.45.0.tar.gz", hash = "sha256:4cb7ae269b8ab9dad9fc490b859f0bc2f885121e990f5b20407b1faa0db2a1d9", size = 728057, upload-time = "2026-09-10T14:28:04.739Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/92/ac/241c09e6905215f225d8088438ceb1f32cc4b4865f3f49068cb402debfd7/telethon-1.45.0-py3-none-any.whl", hash = "sha256:339e24c83aedc9f12cbe389264627edc49779e4289c535aa90aafc4ce62f7972", size = 804098, upload-time = "2026-09-10T14:28:03.115Z" },
-]
-
-[[package]]
-name = "translit-rs"
-version = "0.8.2"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "disarm" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/ab/89/1760bf612f97f6a59a1e2ce4e275514cd58a569099e8820877aa660cacc7/translit_rs-0.8.2.tar.gz", hash = "sha256:33601eed392168971d7ecf295d6e132a719f449ea41e7e04268defb6ebde7cb0", size = 3582, upload-time = "2026-06-11T18:35:47.618Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/f0/28/57adcae82becb12649235c396972557ddfc643ed5d52edee94ba4c4a3ab7/translit_rs-0.8.2-py3-none-any.whl", hash = "sha256:c0ec8ebf0bd2ee6192cde7064b5038875376782ced5c0db3b217cc30f5e1d19f", size = 2925, upload-time = "2026-06-11T18:35:46.512Z" },
 ]
 
 [[package]]

@@ -11,13 +11,9 @@ class Config:
     SESSION_NAME: str = "session_py"
     # Это пиздец но вроде работает :)
     HOME_PATH = os.path.dirname(
-        os.path.dirname(
-            os.path.dirname(
-                os.path.abspath(__file__)
-                )
-            )
-        )
-    YOUTUBE_DOMAINS: tuple[str] = (
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    )
+    YOUTUBE_DOMAINS: tuple[str, ...] = (
         "youtube.com",
         "www.youtube.com",
         "m.youtube.com",
@@ -199,6 +195,3 @@ class Config:
         "youtube.com.uy",
         "youtube.com.ve",
     )
-    
-    def fix_session_name():
-        pass
