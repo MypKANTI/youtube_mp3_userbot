@@ -22,7 +22,7 @@ async def authorization_send_code(client: TelegramClient) -> None:
             f2 = input("Please enter your password: ")
             await client.sign_in(password=f2)
     except KeyboardInterrupt:
-        sys.exit(130) 
+        sys.exit(130)
 
 
 async def authorization_qrcode(client: TelegramClient) -> None:
@@ -45,7 +45,7 @@ async def authorization_qrcode(client: TelegramClient) -> None:
             f2 = input("Please enter your password: ")
             await client.sign_in(password=f2)
         except KeyboardInterrupt:
-            sys.exit(130) 
+            sys.exit(130)
 
 
 async def is_user_authorized(client: TelegramClient) -> bool:
@@ -68,11 +68,11 @@ async def authorization(client: TelegramClient) -> None:
     Функция выбора типа авторизации
     """
     print("""1 = authorization send code\n2 = authorization qrcode\n\n""")
-    
+
     try:
         user_input = input("please type authorization: ")
     except KeyboardInterrupt:
-        sys.exit(130) 
+        sys.exit(130)
 
     if user_input == "1":
         await authorization_send_code(client)

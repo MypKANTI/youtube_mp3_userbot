@@ -14,10 +14,3 @@ dependencies = [
     "telethon>=1.45.0",
     "pydantic",
 ]
-
-[project.scripts]
-my-user-bot = "my_user_bot:main"
-
-[build-system]
-requires = ["uv_build>=0.12.7,<0.13.0"]
-build-backend = "uv_build"

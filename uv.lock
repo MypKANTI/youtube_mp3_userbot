@@ -441,7 +441,7 @@ wheels = [
 [[package]]
 name = "my-user-bot"
 version = "0.2.0"
-source = { editable = "." }
+source = { virtual = "." }
 dependencies = [
     { name = "pydantic" },
     { name = "pytest" },
