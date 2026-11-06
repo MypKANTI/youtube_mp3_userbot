@@ -79,21 +79,23 @@ async def handler_download_mp3(event: events.NewMessage.Event) -> None:
                 # удаляем сообщение с командой в чате
                 await event.message.delete()
 
-                # Проверяем есть ли в кеше url
-                is_cache: str | bool = CacheDowloads().get_path_file(url)
+                # Использование кэша
+                if Config.USE_CACHE:
+                    # Проверяем есть ли в кеше url
+                    is_cache: str | bool = CacheDowloads().get_path_file(url)
 
-                if is_cache:
-                    file_path = is_cache
-                    if not os.path.isfile(file_path):
-                        log.info("файл не существует: %s", file_path)
-                    else:
-                        log.info("url: %s", url)
-                        await _send_audio(
-                            event,
-                            file_path,
-                            caption=("Файл найден в кеше (по URL)"),
-                        )
-                        return
+                    if is_cache:
+                        file_path = is_cache
+                        if not os.path.isfile(file_path):
+                            log.info("файл не существует: %s", file_path)
+                        else:
+                            log.info("url: %s", url)
+                            await _send_audio(
+                                event,
+                                file_path,
+                                caption=("Файл найден в кеше (по URL)"),
+                            )
+                            return
 
                 # Обновляем статус скачивание
                 Stats.STATUS_DOWNLOAD = True

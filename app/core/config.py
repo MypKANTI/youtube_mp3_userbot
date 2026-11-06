@@ -6,6 +6,8 @@ from typing import Final
 @dataclass(frozen=True)
 class Config:
     VOICE: bool = False
+    # Использовать кеш или нет
+    USE_CACHE: bool = True
     API_ID: Final[int] = 2040
     API_HASH: Final[str] = "b18441a1ff607e10a989891a5462e627"
     SESSION_NAME: str = "session_py"
