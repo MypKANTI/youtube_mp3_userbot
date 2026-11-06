@@ -7,6 +7,7 @@ from telethon.tl.types import DocumentAttributeAudio, DocumentAttributeFilename
 
 from app.core.config import Config
 from app.core.logging import get_log
+from app.core.state import Stats
 from app.services.download_video import download_video_youtube
 from app.utils.cache_dowloads import CacheDowloads
 from app.utils.counter import CounterDowload
@@ -15,14 +16,6 @@ from app.utils.translit import translitor
 from app.utils.validators import ValidURL
 
 log = get_log()
-
-
-class Stats:
-    """Статусы"""
-
-    STATUS_SEND: bool = False
-    STATUS_DOWNLOAD: bool = False
-    COUNT_DOWNLOADS: int = CounterDowload().get_counter()
 
 
 async def _send_audio(
