@@ -69,7 +69,9 @@ Thumbs.db
 # =========================
 # результат выполнения программы
 # =========================
-music
-counter.json
-data
+music/
 *.mp3
+cache/
+cache_dowloads.json
+data/
+counter.json
