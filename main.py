@@ -1,33 +1,33 @@
 #!/user/bin/env python3
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import asyncio
 
+from app.client.auth import authorization, is_user_authorized
 from app.client.client import get_client
-from app.core.logging import setup_logging, get_log
-from app.client.auth import is_user_authorized, authorization
 from app.client.handler import (
-    handler_download_mp3, 
-    handler_status
+    clear_cache,
+    handler_download_mp3,
+    handler_status,
 )
+from app.core.logging import get_log, setup_logging
 
 log = get_log(__name__)
 
+
 async def main():
     try:
-        setup_logging() # Настройка логирование
-        client = get_client() # Создаём клиета
+        setup_logging()  # Настройка логирование
+        client = get_client()  # Создаём клиета
         await client.connect()
         # Статус авторизации
         is_authorized: bool = await is_user_authorized(client)
-        log.debug(
-            "статус авторизации: %s", 
-            is_authorized
-        )
+        log.debug("статус авторизации: %s", is_authorized)
 
         if is_authorized:
-            log.info(f"пользователь уже авторизован")
+            log.info("пользователь уже авторизован")
             # Подключаем handlers
+            client.add_event_handler(clear_cache)
             client.add_event_handler(handler_download_mp3)
             client.add_event_handler(handler_status)
             # Блокируем закрытие программы

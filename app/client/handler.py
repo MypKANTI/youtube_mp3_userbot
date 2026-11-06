@@ -41,6 +41,25 @@ async def _send_audio(
 
 
 @events.register(
+    events.NewMessage(func=lambda e: e.text.startswith("/clear_cache"))
+)
+async def clear_cache(events: events.NewMessage.Event) -> None:
+    """
+    Функция очистки кеша через команду /clear_cache
+    """
+    CACHE_DIR = os.path.join(Config.HOME_PATH, "cache")
+    CACHE_FILE = os.path.join(CACHE_DIR, "cache_dowloads.json")
+
+    if os.path.isdir(CACHE_DIR):
+        if os.path.isfile(CACHE_FILE):
+            os.remove(CACHE_FILE)
+            await events.reply("✅ Кэш успесно очистил")
+            return
+
+    await events.reply("❌ Кэш не очистил (скорее всего он пуст)")
+
+
+@events.register(
     events.NewMessage(func=lambda e: e.text.startswith("/status"))
 )
 async def handler_status(event: events.NewMessage.Event) -> None:
@@ -89,7 +108,7 @@ async def handler_download_mp3(event: events.NewMessage.Event) -> None:
                         if not os.path.isfile(file_path):
                             log.info("файл не существует: %s", file_path)
                         else:
-                            log.info("url: %s", url)
+                            log.info("url в кэше: %s", url)
                             await _send_audio(
                                 event,
                                 file_path,
