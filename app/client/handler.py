@@ -1,4 +1,6 @@
 import asyncio
+import os
+from typing import Literal
 
 from telethon import events
 from telethon.tl.types import DocumentAttributeAudio, DocumentAttributeFilename
@@ -6,6 +8,7 @@ from telethon.tl.types import DocumentAttributeAudio, DocumentAttributeFilename
 from app.core.config import Config
 from app.core.logging import get_log
 from app.services.download_video import download_video_youtube
+from app.utils.cache_dowloads import CacheDowloads
 from app.utils.counter import CounterDowload
 from app.utils.formatters import format_data, format_quantity
 from app.utils.translit import translitor
@@ -22,6 +25,28 @@ class Stats:
     COUNT_DOWNLOADS: int = CounterDowload().get_counter()
 
 
+async def _send_audio(
+    event: events.NewMessage.Event,
+    path_audio: str | Literal[True],
+    caption: str | None = None,
+    parse_mode: str = "md",
+    attributes: list | None = None,
+) -> None:
+    # Обновляем статус отправки
+    Stats.STATUS_SEND = True
+
+    await event.client.send_file(
+        event.message.chat.id,
+        path_audio,
+        caption=caption,
+        parse_mode=parse_mode,
+        attributes=attributes,
+    )
+
+    # Обновляем статус отправки
+    Stats.STATUS_SEND = False
+
+
 @events.register(
     events.NewMessage(func=lambda e: e.text.startswith("/status"))
 )
@@ -30,7 +55,7 @@ async def handler_status(event: events.NewMessage.Event) -> None:
         log.info("запросил статус")
         message = (
             "Userbot status: START\n"
-            "Version: 0.3.1\n"
+            "Version: 0.4.0\n"
             f"Download: {Stats.STATUS_DOWNLOAD}\n"
             f"Send status: {Stats.STATUS_SEND}\n"
             f"Загрузок: {CounterDowload().get_counter()}"
@@ -61,11 +86,30 @@ async def handler_download_mp3(event: events.NewMessage.Event) -> None:
                 # удаляем сообщение с командой в чате
                 await event.message.delete()
 
+                # Проверяем есть ли в кеше url
+                is_cache: str | bool = CacheDowloads().get_path_file(url)
+
+                if is_cache:
+                    file_path = is_cache
+                    if not os.path.isfile(file_path):
+                        log.info("файл не существует: %s", file_path)
+                    else:
+                        log.info("url: %s", url)
+                        await _send_audio(
+                            event,
+                            file_path,
+                            caption=("Файл найден в кеше (по URL)"),
+                        )
+                        return
+
                 # Обновляем статус скачивание
                 Stats.STATUS_DOWNLOAD = True
 
                 # Качаем аудио и получаем информацию
                 audio = await asyncio.to_thread(download_video_youtube, url)
+
+                # Заносим url и ппуть до файла в кеш
+                CacheDowloads().add_url_and_path(url, audio["path_audio"])
 
                 # Обновляем статус скачивание
                 Stats.STATUS_DOWNLOAD = False
@@ -91,15 +135,11 @@ async def handler_download_mp3(event: events.NewMessage.Event) -> None:
 
                 log.debug("caption: %s", caption)
 
-                # Обновляем статус отправки
-                Stats.STATUS_SEND = True
-
                 # Отпраляем аудио
-                await event.client.send_file(
-                    event.message.chat.id,
-                    audio["path_audio"],  # Полный пуит аудио
+                await _send_audio(
+                    event,
+                    path_audio=audio["path_audio"],
                     caption=caption,
-                    parse_mode="md",
                     attributes=[
                         DocumentAttributeFilename(
                             file_name=f"{file_name}.mp3"
@@ -112,9 +152,6 @@ async def handler_download_mp3(event: events.NewMessage.Event) -> None:
                         ),
                     ],
                 )
-
-                # Обновляем статус отправки
-                Stats.STATUS_SEND = False
             else:
                 log.info(
                     "количеству аргументов %s http/s?: %s YouTube?: %s message: %s",
