@@ -4,7 +4,7 @@ import os
 from app.core.config import Config
 
 PATH_DATA = os.path.join(Config.HOME_PATH, "data")
-PATH_JSON = os.path.join(PATH_DATA, "counter.json")
+PATH_DATA_JSON = os.path.join(PATH_DATA, "counter.json")
 os.makedirs(PATH_DATA, exist_ok=True)
 
 
@@ -19,11 +19,11 @@ class CounterDowload:
         файла счётчика нету то создаём его
         и возращаем словарь со значением 0
         """
-        if os.path.isfile(PATH_JSON):
-            with open(PATH_JSON, "r", encoding="UTF-8") as file:
+        if os.path.isfile(PATH_DATA_JSON):
+            with open(PATH_DATA_JSON, "r", encoding="UTF-8") as file:
                 return json.load(file)
         else:
-            with open(PATH_JSON, "w", encoding="UTF-8") as file:
+            with open(PATH_DATA_JSON, "w", encoding="UTF-8") as file:
                 json.dump({"count_dowloads": 0}, file, indent=2)
                 return {"count_dowloads": 0}
 
@@ -47,5 +47,5 @@ class CounterDowload:
 
         counter += 1
 
-        with open(PATH_JSON, "w", encoding="UTF-8") as file:
+        with open(PATH_DATA_JSON, "w", encoding="UTF-8") as file:
             json.dump({"count_dowloads": counter}, file)

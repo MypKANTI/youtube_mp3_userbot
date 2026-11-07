@@ -7,6 +7,7 @@ from app.client.auth import authorization, is_user_authorized
 from app.client.client import get_client
 from app.client.handler import (
     clear_cache,
+    clear_count,
     handler_download_mp3,
     handler_status,
 )
@@ -27,6 +28,7 @@ async def main():
         if is_authorized:
             log.info("пользователь уже авторизован")
             # Подключаем handlers
+            client.add_event_handler(clear_count)
             client.add_event_handler(clear_cache)
             client.add_event_handler(handler_download_mp3)
             client.add_event_handler(handler_status)

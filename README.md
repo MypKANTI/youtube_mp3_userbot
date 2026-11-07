@@ -16,6 +16,7 @@
 - 📥 /do [url YouTube] или /dowload_mp3 [url YouTube]
 - 📊 /status - покажет статистику и статусы
 - 🗑 /clear_cache - очистит кеш
+- 🗑 /clear_count - очистка счётчика
 
 ## Совместимо с (проверено лично)
 | OS         | Статус  |

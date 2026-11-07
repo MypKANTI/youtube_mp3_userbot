@@ -9,8 +9,12 @@ from app.core.config import Config
 from app.core.logging import get_log
 from app.core.state import Stats
 from app.services.download_video import download_video_youtube
-from app.utils.cache_dowloads import CacheDowloads
-from app.utils.counter import CounterDowload
+from app.utils.cache_dowloads import (
+    PATH_DIR_CACHE,
+    PATH_FILE_CACHE,
+    CacheDowloads,
+)
+from app.utils.counter import PATH_DATA_JSON, CounterDowload
 from app.utils.formatters import format_data, format_quantity
 from app.utils.translit import translitor
 from app.utils.validators import ValidURL
@@ -41,18 +45,35 @@ async def _send_audio(
 
 
 @events.register(
+    events.NewMessage(func=lambda e: e.text.startswith("/clear_count"))
+)
+async def clear_count(events: events.NewMessage.Event) -> None:
+    """
+    Очистка счётчика
+    """
+    if Stats.COUNT_DOWNLOADS > 0:
+        # удаляем файл
+        os.remove(PATH_DATA_JSON)
+        # сбрамываем счётчик
+        Stats.COUNT_DOWNLOADS = 0
+        await events.reply("✅ Успешно очистил количество загрузок")
+        return
+
+    await events.reply(
+        f"❌ Не очистил количество загрузок их 0: ({Stats.COUNT_DOWNLOADS})"
+    )
+
+
+@events.register(
     events.NewMessage(func=lambda e: e.text.startswith("/clear_cache"))
 )
 async def clear_cache(events: events.NewMessage.Event) -> None:
     """
     Функция очистки кеша через команду /clear_cache
     """
-    CACHE_DIR = os.path.join(Config.HOME_PATH, "cache")
-    CACHE_FILE = os.path.join(CACHE_DIR, "cache_dowloads.json")
-
-    if os.path.isdir(CACHE_DIR):
-        if os.path.isfile(CACHE_FILE):
-            os.remove(CACHE_FILE)
+    if os.path.isdir(PATH_DIR_CACHE):
+        if os.path.isfile(PATH_FILE_CACHE):
+            os.remove(PATH_FILE_CACHE)
             await events.reply("✅ Кэш успесно очистил")
             return
 
@@ -66,7 +87,6 @@ async def handler_status(event: events.NewMessage.Event) -> None:
     if event.message.text:
         log.info("запросил статус")
         message = (
-            "Userbot status: START\n"
             "Version: 0.4.0\n"
             f"Download: {Stats.STATUS_DOWNLOAD}\n"
             f"Send status: {Stats.STATUS_SEND}\n"
