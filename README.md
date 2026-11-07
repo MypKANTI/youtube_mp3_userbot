@@ -13,7 +13,7 @@
 
 ## Доступные команды
 
-- 📥 /do [url YouTube] или /dowload_mp3 [url YouTube]
+- 📥 /do [url YouTube] или /download_mp3 [url YouTube]
 - 📊 /status - покажет статистику и статусы
 - 🗑 /clear_cache - очистит кеш
 - 🗑 /clear_count - очистка счётчика
