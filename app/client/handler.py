@@ -1,12 +1,14 @@
 import asyncio
+import getpass
 import os
+from datetime import datetime
 from typing import Literal
 
 from telethon import events
 from telethon.tl.types import DocumentAttributeAudio, DocumentAttributeFilename
 
 from app.core.config import Config
-from app.core.logging import get_log
+from app.core.logging import PATH_DIR_LOG, PATH_FILE_LOG, get_log
 from app.core.state import Stats
 from app.services.download_video import download_video_youtube
 from app.utils.cache_dowloads import (
@@ -45,9 +47,56 @@ async def _send_audio(
 
 
 @events.register(
+    events.NewMessage(func=lambda e: e.text.startswith("/send_log"))
+)
+async def handler_send_log(events: events.NewMessage.Event) -> None:
+    """
+    Отправка логов в телеграм чат
+    """
+    log.info("пользователь запросил отправку логов")
+
+    # Проверка есть ли деректория
+    if not os.path.isdir(PATH_DIR_LOG):
+        log.warning("нет деректории logs")
+        await events.reply(
+            "Папки с логами не обнаружено по пути: %s", PATH_DIR_LOG
+        )
+        return
+
+    # Проверка есть ли файл
+    if not os.path.isfile(PATH_FILE_LOG):
+        log.warning("нет файла логов по пути: %s", PATH_FILE_LOG)
+        await events.reply("Нет файла логов")
+        return
+
+    size_log_file = os.path.getsize(PATH_FILE_LOG)
+
+    # Проверка на целость файла и на пустату
+    if size_log_file <= 0:
+        log.warning("файл пуст или бит размер файла: %s", size_log_file)
+        await events.reply(
+            "файл .log бит или пуст\n" f"размер файла: {size_log_file} байт"
+        )
+        return
+
+    # Отправка файла логов
+    await events.client.send_file(
+        events.message.chat.id,
+        file=PATH_FILE_LOG,
+        caption=(
+            f"Логи с сервера: {getpass.getuser()}\n"
+            f"Размер файла: {size_log_file} байт\n"
+            f"Время и дата: {datetime.now().strftime("%d/%m/%Y, %H:%M:%S")}"
+        ),
+        reply_to=events.id,
+    )
+    log.info("файл логов был отправлен успешно")
+
+
+@events.register(
     events.NewMessage(func=lambda e: e.text.startswith("/clear_count"))
 )
-async def clear_count(events: events.NewMessage.Event) -> None:
+async def handler_clear_count(events: events.NewMessage.Event) -> None:
     """
     Очистка счётчика
     """
@@ -67,7 +116,7 @@ async def clear_count(events: events.NewMessage.Event) -> None:
 @events.register(
     events.NewMessage(func=lambda e: e.text.startswith("/clear_cache"))
 )
-async def clear_cache(events: events.NewMessage.Event) -> None:
+async def handler_clear_cache(events: events.NewMessage.Event) -> None:
     """
     Функция очистки кеша через команду /clear_cache
     """
@@ -87,7 +136,6 @@ async def handler_status(event: events.NewMessage.Event) -> None:
     if event.message.text:
         log.info("запросил статус")
         message = (
-            "Version: 0.4.0\n"
             f"Download: {Stats.STATUS_DOWNLOAD}\n"
             f"Send status: {Stats.STATUS_SEND}\n"
             f"Загрузок: {CounterDowload().get_counter()}"
