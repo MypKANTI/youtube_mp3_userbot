@@ -100,7 +100,7 @@ async def handler_clear_count(events: events.NewMessage.Event) -> None:
     """
     Очистка счётчика
     """
-    if Stats.COUNT_DOWNLOADS > 0:
+    if CounterDowload().get_counter() > 0:
         # удаляем файл
         os.remove(PATH_DATA_JSON)
         # сбрамываем счётчик

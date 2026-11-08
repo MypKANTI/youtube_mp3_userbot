@@ -1,6 +1,9 @@
+from dataclasses import dataclass
+
 from app.utils.counter import CounterDowload
 
 
+@dataclass(frozen=False)
 class Stats:
     """Статусы"""
 
