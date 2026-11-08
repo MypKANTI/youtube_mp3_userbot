@@ -18,6 +18,7 @@ from app.utils.cache_dowloads import (
 )
 from app.utils.counter import PATH_DATA_JSON, CounterDowload
 from app.utils.formatters import format_data, format_quantity
+from app.utils.music_library import format_music_message, list_music_file
 from app.utils.translit import translitor
 from app.utils.validators import ValidURL
 
@@ -44,6 +45,25 @@ async def _send_audio(
 
     # Обновляем статус отправки
     Stats.STATUS_SEND = False
+
+
+@events.register(
+    events.NewMessage(func=lambda e: e.text.startswith("/list_music"))
+)
+async def handler_list_music(events: events.NewMessage.Event) -> None:
+    PATH_DIR_MUSIC = os.path.join(Config.HOME_PATH, "music")
+
+    # Проверка есть ли такая деректория
+    if not os.path.isdir(PATH_DIR_MUSIC):
+        log.warning("нет деректории с музыкой по пути: %s", PATH_DIR_MUSIC)
+        await events.reply("нету папки music")
+        return
+
+    list_file: list = list_music_file()
+    log.info("список музыки: ", list_file)
+    format_message: str = format_music_message(list_file)
+
+    await events.reply(format_message)
 
 
 @events.register(
