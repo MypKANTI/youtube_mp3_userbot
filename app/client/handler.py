@@ -84,9 +84,9 @@ async def handler_send_log(events: events.NewMessage.Event) -> None:
         events.message.chat.id,
         file=PATH_FILE_LOG,
         caption=(
-            f"Логи с сервера: {getpass.getuser()}\n"
-            f"Размер файла: {size_log_file} байт\n"
-            f"Время и дата: {datetime.now().strftime("%d/%m/%Y, %H:%M:%S")}"
+            f"🖥️ Логи с сервера: {getpass.getuser()}\n"
+            f"📦 Размер файла: {size_log_file} байт\n"
+            f"🕒 Время и дата: {datetime.now().strftime("%d/%m/%Y, %H:%M:%S")}"
         ),
         reply_to=events.id,
     )
@@ -136,9 +136,9 @@ async def handler_status(event: events.NewMessage.Event) -> None:
     if event.message.text:
         log.info("запросил статус")
         message = (
-            f"Download: {Stats.STATUS_DOWNLOAD}\n"
-            f"Send status: {Stats.STATUS_SEND}\n"
-            f"Загрузок: {CounterDowload().get_counter()}"
+            f"💾 Download: {"✅" if Stats.STATUS_DOWNLOAD else "❌"}\n"
+            f"✉️ Send status: {"✅" if Stats.STATUS_SEND else "❌"}\n"
+            f"🎵 Загрузок: {CounterDowload().get_counter()}"
         )
         await event.reply(message)
 
