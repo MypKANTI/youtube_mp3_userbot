@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 from app.core.config import Config
 
@@ -10,28 +10,28 @@ def list_music_file() -> list:
     Returns:
         list: список всей мызыки с полными путями до файлов
     """
-    PATH_DIR_MUSIC = os.path.join(Config.HOME_PATH, "music")
+    PATH_DIR_MUSIC = Path(Config.HOME_PATH) / "music"
 
-    file_list = []
+    file_mp3 = []
 
-    for dir in os.listdir(PATH_DIR_MUSIC):
-        dir = os.path.join(PATH_DIR_MUSIC, dir)  # Полный путь
+    for dir in PATH_DIR_MUSIC.iterdir():
+        dir = Path(PATH_DIR_MUSIC) / dir  # Полный путь
+
         if (
-            os.path.isfile(dir)
-            and dir.endswith(".mp3")
-            and os.stat(dir).st_size > 0
+            dir.is_file()
+            and dir.suffix.lower() == ".mp3"
+            and dir.stat().st_size > 0
         ):
-            file_list.append(dir)
+            file_mp3.append(dir)
 
-    return file_list
+    return file_mp3
 
 
-def format_music_message(file_list: list) -> str:
-    # пустое сообщение
-    message = "🎵 Ваша музыка: \n\n"
-
-    # Заполняем сообщение
-    for e, i in enumerate(sorted(file_list, key=len)):
-        message += f"[{e}] {i.split('\\')[-1].strip()}\n"
-
+def format_music_message(file_list: list[Path]) -> str:
+    message = "🎵 Ваша музыка:\n\n"
+    # TODO: у Path нет len
+    for idx, path in enumerate(
+        sorted(file_list, key=lambda p: p.name), start=1
+    ):
+        message += f"[{idx}] {path.name}\n"
     return message
