@@ -9,6 +9,7 @@ from app.client.handler import (
     handler_clear_cache,
     handler_clear_count,
     handler_download_mp3,
+    handler_help,
     handler_list_music,
     handler_send_log,
     handler_status,
@@ -30,6 +31,7 @@ async def main():
         if is_authorized:
             log.info("пользователь уже авторизован")
             # Подключаем handlers
+            client.add_event_handler(handler_help)
             client.add_event_handler(handler_list_music)
             client.add_event_handler(handler_send_log)
             client.add_event_handler(handler_clear_count)

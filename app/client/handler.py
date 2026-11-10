@@ -47,6 +47,23 @@ async def _send_audio(
     Stats.STATUS_SEND = False
 
 
+@events.register(events.NewMessage(func=lambda e: e.text.startswith("/help")))
+async def handler_help(events: events.NewMessage.Event) -> None:
+    """
+    отоброзит список доступных команд
+    """
+    message = (
+        "доступные команды:\n\n"
+        "📥 /do [url YouTube] - скачает видео\n"
+        "📊 /status - покажет статистику и статусы\n"
+        "🗑 /clear_cache - очистит кеш\n"
+        "🗑 /clear_count - очистка счётчика\n"
+        "📨 /send_log - отправка логов в чат\n"
+        "🎵 /list_music - список всей музыки\n"
+    )
+    await events.reply(message)
+
+
 @events.register(
     events.NewMessage(func=lambda e: e.text.startswith("/list_music"))
 )
