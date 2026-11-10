@@ -13,6 +13,7 @@
 
 ## Доступные команды
 
+- ℹ️ /help - список доступных команд
 - 📥 /do [url YouTube] или /download_mp3 [url YouTube]
 - 📊 /status - покажет статистику и статусы
 - 🗑 /clear_cache - очистит кеш
