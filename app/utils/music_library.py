@@ -3,7 +3,7 @@ from pathlib import Path
 from app.core.config import Config
 
 
-def list_music_file() -> list:
+def list_music_file() -> list[Path]:
     """
     получает всю музыку из папки music
 
@@ -15,14 +15,14 @@ def list_music_file() -> list:
     file_mp3 = []
 
     for dir in PATH_DIR_MUSIC.iterdir():
-        dir = Path(PATH_DIR_MUSIC) / dir  # Полный путь
+        file: Path = Path(PATH_DIR_MUSIC) / dir  # Полный путь
 
         if (
-            dir.is_file()
-            and dir.suffix.lower() == ".mp3"
-            and dir.stat().st_size > 0
+            file.is_file()
+            and file.suffix.lower() == ".mp3"
+            and file.stat().st_size > 0
         ):
-            file_mp3.append(dir)
+            file_mp3.append(file)
 
     return file_mp3
 

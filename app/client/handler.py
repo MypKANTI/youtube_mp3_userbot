@@ -1,7 +1,7 @@
 import asyncio
 import getpass
-import os
 from datetime import datetime
+from pathlib import Path
 from typing import Literal
 
 from telethon import events
@@ -25,9 +25,9 @@ from app.utils.validators import ValidURL
 log = get_log()
 
 
-async def _send_audio(
+async def send_audio(
     event: events.NewMessage.Event,
-    path_audio: str | Literal[True],
+    path_audio: Path | Literal[True],
     caption: str | None = None,
     parse_mode: str = "md",
     attributes: list | None = None,
@@ -68,15 +68,15 @@ async def handler_help(events: events.NewMessage.Event) -> None:
     events.NewMessage(func=lambda e: e.text.startswith("/list_music"))
 )
 async def handler_list_music(events: events.NewMessage.Event) -> None:
-    PATH_DIR_MUSIC = os.path.join(Config.HOME_PATH, "music")
+    PATH_DIR_MUSIC = Path(Config.HOME_PATH) / "music"
 
     # Проверка есть ли такая деректория
-    if not os.path.isdir(PATH_DIR_MUSIC):
+    if not PATH_DIR_MUSIC.is_dir():
         log.warning("нет деректории с музыкой по пути: %s", PATH_DIR_MUSIC)
         await events.reply("нету папки music")
         return
 
-    list_file: list = list_music_file()
+    list_file: list[Path] = list_music_file()
     log.info("список музыки: ", list_file)
     format_message: str = format_music_message(list_file)
 
@@ -93,7 +93,7 @@ async def handler_send_log(events: events.NewMessage.Event) -> None:
     log.info("пользователь запросил отправку логов")
 
     # Проверка есть ли деректория
-    if not os.path.isdir(PATH_DIR_LOG):
+    if not PATH_DIR_LOG.is_dir():
         log.warning("нет деректории logs")
         await events.reply(
             "Папки с логами не обнаружено по пути: %s", PATH_DIR_LOG
@@ -101,12 +101,12 @@ async def handler_send_log(events: events.NewMessage.Event) -> None:
         return
 
     # Проверка есть ли файл
-    if not os.path.isfile(PATH_FILE_LOG):
+    if not PATH_FILE_LOG.is_file():
         log.warning("нет файла логов по пути: %s", PATH_FILE_LOG)
         await events.reply("Нет файла логов")
         return
 
-    size_log_file = os.path.getsize(PATH_FILE_LOG)
+    size_log_file = PATH_FILE_LOG.stat().st_size
 
     # Проверка на целость файла и на пустату
     if size_log_file <= 0:
@@ -138,7 +138,7 @@ async def handler_clear_count(events: events.NewMessage.Event) -> None:
     """
     if CounterDowload().get_counter() > 0:
         # удаляем файл
-        os.remove(PATH_DATA_JSON)
+        PATH_DATA_JSON.unlink(missing_ok=True)
         # сбрамываем счётчик
         Stats.COUNT_DOWNLOADS = 0
         await events.reply("✅ Успешно очистил количество загрузок")
@@ -156,9 +156,9 @@ async def handler_clear_cache(events: events.NewMessage.Event) -> None:
     """
     Функция очистки кеша через команду /clear_cache
     """
-    if os.path.isdir(PATH_DIR_CACHE):
-        if os.path.isfile(PATH_FILE_CACHE):
-            os.remove(PATH_FILE_CACHE)
+    if PATH_DIR_CACHE.is_dir():
+        if PATH_FILE_CACHE.is_file():
+            PATH_FILE_CACHE.unlink(missing_ok=True)
             await events.reply("✅ Кэш успесно очистил")
             return
 
@@ -205,17 +205,18 @@ async def handler_download_mp3(event: events.NewMessage.Event) -> None:
                 # Использование кэша
                 if Config.USE_CACHE:
                     # Проверяем есть ли в кеше url
-                    is_cache: str | bool = CacheDowloads().get_path_file(url)
+                    file_cache: Path | bool = CacheDowloads().get_path_file(
+                        url
+                    )
 
-                    if is_cache:
-                        file_path = is_cache
-                        if not os.path.isfile(file_path):
-                            log.info("файл не существует: %s", file_path)
+                    if isinstance(file_cache, Path):
+                        if not file_cache.is_file():
+                            log.info("файл не существует: %s", file_cache)
                         else:
                             log.info("url в кэше: %s", url)
-                            await _send_audio(
+                            await send_audio(
                                 event,
-                                file_path,
+                                file_cache,
                                 caption=("Файл найден в кеше (по URL)"),
                             )
                             return
@@ -254,7 +255,7 @@ async def handler_download_mp3(event: events.NewMessage.Event) -> None:
                 log.debug("caption: %s", caption)
 
                 # Отпраляем аудио
-                await _send_audio(
+                await send_audio(
                     event,
                     path_audio=audio["path_audio"],
                     caption=caption,

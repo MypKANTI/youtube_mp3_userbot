@@ -51,4 +51,7 @@ async def main():
 
 if __name__ == "__main__":
     log.info("userbot status: START")
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        log.info("программу пользователь прерва в ручную")

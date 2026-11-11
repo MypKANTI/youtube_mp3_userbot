@@ -1,11 +1,11 @@
 import json
-import os
+from pathlib import Path
 
 from app.core.config import Config
 
-PATH_DATA = os.path.join(Config.HOME_PATH, "data")
-PATH_DATA_JSON = os.path.join(PATH_DATA, "counter.json")
-os.makedirs(PATH_DATA, exist_ok=True)
+PATH_DATA = Path(Config.HOME_PATH) / "data"
+PATH_DATA_JSON = Path(PATH_DATA) / "counter.json"
+PATH_DATA.mkdir(exist_ok=True)
 
 
 class CounterDowload:
@@ -19,7 +19,7 @@ class CounterDowload:
         файла счётчика нету то создаём его
         и возращаем словарь со значением 0
         """
-        if os.path.isfile(PATH_DATA_JSON):
+        if PATH_DATA_JSON.is_file():
             with open(PATH_DATA_JSON, "r", encoding="UTF-8") as file:
                 return json.load(file)
         else:

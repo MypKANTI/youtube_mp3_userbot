@@ -1,12 +1,12 @@
 import logging
-import os
 import sys
+from pathlib import Path
 
 from app.core.config import Config
 
-PATH_DIR_LOG = os.path.join(Config.HOME_PATH, "logs")
-PATH_FILE_LOG = os.path.join(PATH_DIR_LOG, "log.log")
-os.makedirs(PATH_DIR_LOG, exist_ok=True)  # Создаём папку
+PATH_DIR_LOG = Path(Config.HOME_PATH) / "logs"
+PATH_FILE_LOG = Path(PATH_DIR_LOG) / "log.log"
+PATH_DIR_LOG.mkdir(exist_ok=True)  # Создаём папку
 
 
 def setup_logging() -> None:

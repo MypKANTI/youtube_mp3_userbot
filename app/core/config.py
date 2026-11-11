@@ -1,5 +1,5 @@
-import os
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Final
 
 
@@ -11,10 +11,7 @@ class Config:
     API_ID: Final[int] = 2040
     API_HASH: Final[str] = "b18441a1ff607e10a989891a5462e627"
     SESSION_NAME: str = "session_py"
-    # Это пиздец но вроде работает :)
-    HOME_PATH = os.path.dirname(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    )
+    HOME_PATH: Final[Path] = Path(__file__).parents[2]
     YOUTUBE_DOMAINS: tuple[str, ...] = (
         "youtube.com",
         "www.youtube.com",

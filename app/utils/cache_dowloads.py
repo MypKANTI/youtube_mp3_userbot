@@ -1,16 +1,16 @@
 import json
-import os
+from pathlib import Path
 
 from app.core.config import Config
 
-PATH_DIR_CACHE = os.path.join(Config.HOME_PATH, "cache")
-PATH_FILE_CACHE = os.path.join(PATH_DIR_CACHE, "cache_dowloads.json")
-os.makedirs(PATH_DIR_CACHE, exist_ok=True)
+PATH_DIR_CACHE = Path(Config.HOME_PATH) / "cache"
+PATH_FILE_CACHE = Path(PATH_DIR_CACHE) / "cache_dowloads.json"
+PATH_DIR_CACHE.mkdir(exist_ok=True)
 
 
 class CacheDowloads:
     def _init(self):
-        if not os.path.isfile(PATH_FILE_CACHE):
+        if not PATH_FILE_CACHE.is_file():
             self._write([])
 
     def _read_json(self) -> list:
@@ -49,7 +49,7 @@ class CacheDowloads:
 
         self._write(file_json)
 
-    def get_path_file(self, url: str) -> str | bool:
+    def get_path_file(self, url: str) -> Path | bool:
         """
         получаем путь до файла по url
 
@@ -67,5 +67,5 @@ class CacheDowloads:
 
         for i in json_data:
             if isinstance(i.get(url, False), str):
-                return i[url]
+                return Path(i[url])
         return False
