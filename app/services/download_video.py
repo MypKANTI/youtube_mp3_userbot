@@ -1,7 +1,7 @@
 from pytubefix import YouTube
+from pytubefix.exceptions import PytubeFixError
 
 from app.core.logging import get_log
-
 
 log = get_log(__name__)
 
@@ -26,11 +26,13 @@ def download_video_youtube(url: str) -> dict:
     views = yt.views
     likes = yt.likes
     publish_date = yt.publish_date
-    
+
     try:
         path = audio_stream.download(
             output_path="music", filename=title.replace(".mp3", "") + ".mp3"
         )
+    except PytubeFixError as e:
+        log.error("ошибка Pytube: %s", e)
     except Exception as e:
         log.error("ошибка при скачивание файла: %s", e)
 
@@ -45,7 +47,7 @@ def download_video_youtube(url: str) -> dict:
             "publish_date": publish_date,
         },
     }
-    
+
     log.debug("данные аудио: %s", audio)
-    
+
     return audio
