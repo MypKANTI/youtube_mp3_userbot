@@ -118,14 +118,13 @@ async def handler_send_log(events: events.NewMessage.Event) -> None:
 
     # Отправка файла логов
     await events.client.send_file(
-        events.message.chat.id,
+        events.chat_id,
         file=PATH_FILE_LOG,
         caption=(
             f"🖥️ Логи с сервера: {getpass.getuser()}\n"
             f"📦 Размер файла: {size_log_file} байт\n"
             f"🕒 Время и дата: {datetime.now().strftime("%d/%m/%Y, %H:%M:%S")}"
         ),
-        reply_to=events.id,
     )
     log.info("файл логов был отправлен успешно")
 
