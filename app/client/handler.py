@@ -227,11 +227,20 @@ async def handler_download_mp3(event: events.NewMessage.Event) -> None:
                 # Качаем аудио и получаем информацию
                 audio = await asyncio.to_thread(download_video_youtube, url)
 
-                # Заносим url и ппуть до файла в кеш
-                CacheDowloads().add_url_and_path(url, audio["path_audio"])
-
                 # Обновляем статус скачивание
                 Stats.STATUS_DOWNLOAD = False
+
+                if audio is None:
+                    log.error("произогла ошибка с pytubefix")
+                    await event.reply(
+                        "произошла ошибка при скачивание виде"
+                        "с ютуба чтобы узнать причину ошибки "
+                        "посмотрите логи программы"
+                    )
+                    return
+
+                # Заносим url и ппуть до файла в кеш
+                CacheDowloads().add_url_and_path(url, audio["path_audio"])
 
                 # Обновляем количество загрузок
                 CounterDowload().add_one()
