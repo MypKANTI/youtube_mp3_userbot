@@ -1,3 +1,5 @@
+[English](docs/REDME_en.md])
+
 <a href="https://t.me/Myp_KANTI"><img src="https://img.shields.io/badge/Мой Telegram-KANTI-blue?logo=Telegram"></a>
 
 **User bot Download MP3 YouTube** 🎵
