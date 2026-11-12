@@ -1,4 +1,4 @@
-[English](docs/REDME_en.md])
+[English](docs/REDME_en.md)
 
 <a href="https://t.me/Myp_KANTI"><img src="https://img.shields.io/badge/Мой Telegram-KANTI-blue?logo=Telegram"></a>
 
