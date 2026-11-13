@@ -60,6 +60,7 @@ async def handler_help(events: events.NewMessage.Event) -> None:
         "🗑 /clear_count - очистка счётчика\n"
         "📨 /send_log - отправка логов в чат\n"
         "🎵 /list_music - список всей музыки\n"
+        "🗄 /auto_clear_cache - авто очистка кеша\n"
     )
     await events.reply(message)
 
@@ -81,6 +82,52 @@ async def handler_list_music(events: events.NewMessage.Event) -> None:
     format_message: str = format_music_message(list_file)
 
     await events.reply(format_message)
+
+
+@events.register(
+    events.NewMessage(func=lambda e: e.text.startswith("/auto_clear_cache"))
+)
+async def handler_auto_clear_cache(events: events.NewMessage.Event) -> None:
+    parts = events.message.text.split()
+
+    # Тригер команды
+    TRIGGERS_ON: tuple[str, ...] = ("on", "вкл")
+    TRIGGERS_OFF: tuple[str, ...] = ("off", "выкл")
+
+    # Проверк на количество аргументов
+    if not len(parts) == 2:
+        log.info("не верное количество аргументов передали: %s", parts)
+        await events.reply(
+            "не верное количестро аргументов\n\n"
+            "Пример: /auto_clear_cache on"
+        )
+        return
+
+    cmd: str = parts[1]
+
+    log.info(cmd)
+
+    if cmd not in TRIGGERS_ON and cmd not in TRIGGERS_OFF:
+        log.info("аргументы для /auto_clear_cache не распознаны")
+        await events.reply(
+            "аргументы не распознаны\n\n"
+            "Подсказка:\n"
+            "Доступные команды:\n"
+            f"Включение: {TRIGGERS_ON}\n"
+            f"Выключение: {TRIGGERS_OFF}"
+        )
+        return
+
+    if cmd in TRIGGERS_ON:
+        log.debug("статус True")
+        Config.AUTO_CLEAR_CACHE = True
+    elif cmd is TRIGGERS_OFF:
+        log.debug("статус False")
+        Config.AUTO_CLEAR_CACHE = False
+
+    await events.reply(
+        f"Авто очиска кеша статус: {"✅" if Config.AUTO_CLEAR_CACHE else "❌"}"
+    )
 
 
 @events.register(
@@ -202,24 +249,25 @@ async def handler_download_mp3(event: events.NewMessage.Event) -> None:
                 # удаляем сообщение с командой в чате
                 await event.message.delete()
 
-                # Использование кэша
-                if Config.USE_CACHE:
-                    # Проверяем есть ли в кеше url
-                    file_cache: Path | bool = CacheDowloads().get_path_file(
-                        url
-                    )
+                if not Config.AUTO_CLEAR_CACHE:
+                    # Использование кэша
+                    if Config.USE_CACHE:
+                        # Проверяем есть ли в кеше url
+                        file_cache: Path | bool = (
+                            CacheDowloads().get_path_file(url)
+                        )
 
-                    if isinstance(file_cache, Path):
-                        if not file_cache.is_file():
-                            log.info("файл не существует: %s", file_cache)
-                        else:
-                            log.info("url в кэше: %s", url)
-                            await send_audio(
-                                event,
-                                file_cache,
-                                caption=("Файл найден в кеше (по URL)"),
-                            )
-                            return
+                        if isinstance(file_cache, Path):
+                            if not file_cache.is_file():
+                                log.info("файл не существует: %s", file_cache)
+                            else:
+                                log.info("url в кэше: %s", url)
+                                await send_audio(
+                                    event,
+                                    file_cache,
+                                    caption=("Файл найден в кеше (по URL)"),
+                                )
+                                return
 
                 # Обновляем статус скачивание
                 Stats.STATUS_DOWNLOAD = True
@@ -239,8 +287,9 @@ async def handler_download_mp3(event: events.NewMessage.Event) -> None:
                     )
                     return
 
-                # Заносим url и ппуть до файла в кеш
-                CacheDowloads().add_url_and_path(url, audio["path_audio"])
+                if not Config.AUTO_CLEAR_CACHE:
+                    # Заносим url и ппуть до файла в кеш
+                    CacheDowloads().add_url_and_path(url, audio["path_audio"])
 
                 # Обновляем количество загрузок
                 CounterDowload().add_one()
