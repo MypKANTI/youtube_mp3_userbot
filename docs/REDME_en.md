@@ -20,6 +20,7 @@ The script connects to a Telegram account and sends audio from **YouTube** video
 - 🗑 `/clear_count` — reset the counter
 - 📨 `/send_log` — send logs to the chat
 - 🎵 `/list_music` — list all downloaded tracks
+- 🧹 /auto_clear_cache <on or off> авто очиска кеша auto cache clearing
 
 ## Compatibility (personally tested)
 
