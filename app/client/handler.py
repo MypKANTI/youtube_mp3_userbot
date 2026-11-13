@@ -290,6 +290,8 @@ async def handler_download_mp3(event: events.NewMessage.Event) -> None:
                 if not Config.AUTO_CLEAR_CACHE:
                     # Заносим url и ппуть до файла в кеш
                     CacheDowloads().add_url_and_path(url, audio["path_audio"])
+                else:
+                    PATH_FILE_CACHE.unlink(missing_ok=True)
 
                 # Обновляем количество загрузок
                 CounterDowload().add_one()
