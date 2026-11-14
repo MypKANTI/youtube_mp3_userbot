@@ -14,7 +14,7 @@ from app.core.logging import get_log
 log = get_log(__name__)
 
 
-def download_video_youtube(url: str) -> dict | None:
+def download_audio_youtube(url: str) -> dict | None:
     """
     Функция для скачивание видео с ютуба
     и получение информации о видео

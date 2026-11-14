@@ -10,7 +10,7 @@ from telethon.tl.types import DocumentAttributeAudio, DocumentAttributeFilename
 from app.core.config import Config
 from app.core.logging import PATH_DIR_LOG, PATH_FILE_LOG, get_log
 from app.core.state import Stats
-from app.services.download_video import download_video_youtube
+from app.services.download_video import download_audio_youtube
 from app.utils.cache_dowloads import (
     PATH_DIR_CACHE,
     PATH_FILE_CACHE,
@@ -273,7 +273,7 @@ async def handler_download_mp3(event: events.NewMessage.Event) -> None:
                 Stats.STATUS_DOWNLOAD = True
 
                 # Качаем аудио и получаем информацию
-                audio = await asyncio.to_thread(download_video_youtube, url)
+                audio = await asyncio.to_thread(download_audio_youtube, url)
 
                 # Обновляем статус скачивание
                 Stats.STATUS_DOWNLOAD = False
