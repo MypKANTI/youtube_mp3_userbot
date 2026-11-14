@@ -1,6 +1,8 @@
 import pytest
 
-from app.services.download_video import download_audio_youtube
+from youtube_mp3_userbot.app.services.download_audio import (
+    download_audio_youtube,
+)
 
 
 @pytest.mark.parametrize(

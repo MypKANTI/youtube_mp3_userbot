@@ -10,7 +10,6 @@ from telethon.tl.types import DocumentAttributeAudio, DocumentAttributeFilename
 from app.core.config import Config
 from app.core.logging import PATH_DIR_LOG, PATH_FILE_LOG, get_log
 from app.core.state import Stats
-from app.services.download_video import download_audio_youtube
 from app.utils.cache_dowloads import (
     PATH_DIR_CACHE,
     PATH_FILE_CACHE,
@@ -21,6 +20,9 @@ from app.utils.formatters import format_data, format_quantity
 from app.utils.music_library import format_music_message, list_music_file
 from app.utils.translit import translitor
 from app.utils.validators import ValidURL
+from youtube_mp3_userbot.app.services.download_audio import (
+    download_audio_youtube,
+)
 
 log = get_log()
 
