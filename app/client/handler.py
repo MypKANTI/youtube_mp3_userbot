@@ -5,48 +5,73 @@ from pathlib import Path
 from typing import Literal
 
 from telethon import events
-from telethon.tl.types import DocumentAttributeAudio, DocumentAttributeFilename
+from telethon.tl.custom.message import Message
+from telethon.tl.types import (
+    DocumentAttributeAudio,
+    DocumentAttributeFilename,
+    InputDocument,
+)
 
 from app.core.config import Config
 from app.core.logging import PATH_DIR_LOG, PATH_FILE_LOG, get_log
 from app.core.state import Stats
+from app.services.download_audio import (
+    download_audio_youtube,
+)
 from app.utils.cache_dowloads import (
     PATH_DIR_CACHE,
     PATH_FILE_CACHE,
     CacheDowloads,
 )
+from app.utils.cache_massage import CacheMessage
 from app.utils.counter import PATH_DATA_JSON, CounterDowload
 from app.utils.formatters import format_data, format_quantity
 from app.utils.music_library import format_music_message, list_music_file
 from app.utils.translit import translitor
 from app.utils.validators import ValidURL
-from youtube_mp3_userbot.app.services.download_audio import (
-    download_audio_youtube,
-)
 
 log = get_log()
 
 
 async def send_audio(
     event: events.NewMessage.Event,
-    path_audio: Path | Literal[True],
+    path_audio: Path | Literal[True] | None = None,
     caption: str | None = None,
     parse_mode: str = "md",
     attributes: list | None = None,
-) -> None:
-    # Обновляем статус отправки
+    cached_doc: tuple[int, int, bytes] | None = None,
+) -> Message | None:
     Stats.STATUS_SEND = True
+    try:
+        # 1) пробуем кеш
+        if cached_doc is not None:
+            try:
+                idx, access_hash, file_reference = cached_doc
+                return await event.client.send_file(
+                    event.message.chat.id,
+                    InputDocument(
+                        id=idx,
+                        access_hash=access_hash,
+                        file_reference=file_reference,
+                    ),
+                    caption=caption,
+                    parse_mode=parse_mode,
+                )
+            except Exception:
+                log.warning("кеш telethon устарел")
+                if path_audio is None:
+                    return None  # сообщаем handler'у: качай с диска
 
-    await event.client.send_file(
-        event.message.chat.id,
-        path_audio,
-        caption=caption,
-        parse_mode=parse_mode,
-        attributes=attributes,
-    )
-
-    # Обновляем статус отправки
-    Stats.STATUS_SEND = False
+        # 2) обычная отправка с диска
+        return await event.client.send_file(
+            event.message.chat.id,
+            path_audio,
+            caption=caption,
+            parse_mode=parse_mode,
+            attributes=attributes,
+        )
+    finally:
+        Stats.STATUS_SEND = False
 
 
 @events.register(events.NewMessage(func=lambda e: e.text.startswith("/help")))
@@ -251,6 +276,13 @@ async def handler_download_mp3(event: events.NewMessage.Event) -> None:
                 # удаляем сообщение с командой в чате
                 await event.message.delete()
 
+                cache = CacheMessage().get_cache(url)
+
+                if cache is not None:
+                    message_info = await send_audio(event, cached_doc=cache)
+                    if message_info is not None:
+                        return
+
                 if not Config.AUTO_CLEAR_CACHE:
                     # Использование кэша
                     if Config.USE_CACHE:
@@ -317,7 +349,7 @@ async def handler_download_mp3(event: events.NewMessage.Event) -> None:
                 log.debug("caption: %s", caption)
 
                 # Отпраляем аудио
-                await send_audio(
+                message_info = await send_audio(
                     event,
                     path_audio=audio["path_audio"],
                     caption=caption,
@@ -333,6 +365,21 @@ async def handler_download_mp3(event: events.NewMessage.Event) -> None:
                         ),
                     ],
                 )
+
+                if message_info is None:
+                    log.error("send_audio вернул None файл не отправлен")
+                    return
+
+                document = message_info.document
+                if document is not None:
+                    CacheMessage().add_cache(
+                        url,
+                        (
+                            document.id,
+                            document.access_hash,
+                            document.file_reference,
+                        ),
+                    )
             else:
                 log.info(
                     "количеству аргументов %s http/s?: %s YouTube?: %s message: %s",

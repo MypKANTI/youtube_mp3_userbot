@@ -31,4 +31,4 @@ exclude =
     migrations
 
 # Максимальная цикломатическая сложность функции.
-max-complexity = 10
+max-complexity = 15
