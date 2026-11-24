@@ -77,6 +77,11 @@ uv sync
 uv run python main.py # Запуск
 ```
 
+# Disclaimer
+```
+The use of userbots violates Telegram's Terms of Service and may result in account suspension. The author of this program assumes no responsibility for any consequences, including restrictions or blocking of your account.
+```
+
 ### 💬 Author's note
 ```
 I originally wrote this program mostly for myself, and once it became genuinely
