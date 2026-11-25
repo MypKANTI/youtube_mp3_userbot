@@ -12,6 +12,7 @@ from telethon.tl.types import (
     InputDocument,
 )
 
+from app.core.bd import BD
 from app.core.config import Config
 from app.core.logging import PATH_DIR_LOG, PATH_FILE_LOG, get_log
 from app.core.state import Stats
@@ -31,6 +32,16 @@ from app.utils.translit import translitor
 from app.utils.validators import ValidURL
 
 log = get_log()
+
+
+# Cоздаем два обекта класс для управления разными таблицами но одной базой данных
+BD_UTILS = BD()
+BD_UTILS.name_table = "utils"
+BD_UTILS.name_pillar = "datetime, user, utils_command"
+
+BD_DOWNLOADS = BD()
+BD_DOWNLOADS.name_table = "downloads"
+BD_DOWNLOADS.name_pillar = "datetime, user, youtube_link"
 
 
 async def send_audio(
@@ -93,6 +104,17 @@ async def handler_help(events: events.NewMessage.Event) -> None:
 
 
 @events.register(
+    events.NewMessage(
+        func=lambda e: e.text.startswith("/") and not e.text.startswith("/do")
+    )
+)
+async def pre_command_handler(event: events.NewMessage.Event) -> None:
+    if event.message.text:
+        message = event.message.text
+        BD_UTILS.add_data((datetime.now(), getpass.getuser(), message))
+
+
+@events.register(
     events.NewMessage(func=lambda e: e.text.startswith("/list_music"))
 )
 async def handler_list_music(events: events.NewMessage.Event) -> None:
@@ -152,9 +174,9 @@ async def handler_auto_clear_cache(events: events.NewMessage.Event) -> None:
         log.debug("статус False")
         Config.AUTO_CLEAR_CACHE = False
 
-    await events.reply(
-        f"Авто очиска кеша статус: {"✅" if Config.AUTO_CLEAR_CACHE else "❌"}"
-    )
+    status = "✅" if Stats.STATUS_DOWNLOAD else "❌"
+    text = f"💾 Download: {status}\n"
+    await events.reply(text)
 
 
 @events.register(
@@ -197,7 +219,7 @@ async def handler_send_log(events: events.NewMessage.Event) -> None:
         caption=(
             f"🖥️ Логи с сервера: {getpass.getuser()}\n"
             f"📦 Размер файла: {size_log_file} байт\n"
-            f"🕒 Время и дата: {datetime.now().strftime("%d/%m/%Y, %H:%M:%S")}"
+            f"🕒 Время и дата: {datetime.now().strftime('%d/%m/%Y, %H:%M:%S')}"
         ),
     )
     log.info("файл логов был отправлен успешно")
@@ -246,8 +268,8 @@ async def handler_status(event: events.NewMessage.Event) -> None:
     if event.message.text:
         log.info("запросил статус")
         message = (
-            f"💾 Download: {"✅" if Stats.STATUS_DOWNLOAD else "❌"}\n"
-            f"✉️ Send status: {"✅" if Stats.STATUS_SEND else "❌"}\n"
+            f"💾 Download: {'✅' if Stats.STATUS_DOWNLOAD else '❌'}\n"
+            f"✉️ Send status: {'✅' if Stats.STATUS_SEND else '❌'}\n"
             f"🎵 Загрузок: {CounterDowload().get_counter()}"
         )
         await event.reply(message)
@@ -311,6 +333,9 @@ async def handler_download_mp3(event: events.NewMessage.Event) -> None:
 
                 # Обновляем статус скачивание
                 Stats.STATUS_DOWNLOAD = False
+
+                # записываем в бд
+                BD_DOWNLOADS.add_data((datetime.now(), getpass.getuser(), url))
 
                 if audio is None:
                     log.error("произогла ошибка с pytubefix")

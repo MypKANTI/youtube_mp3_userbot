@@ -14,6 +14,7 @@ from app.client.handler import (
     handler_list_music,
     handler_send_log,
     handler_status,
+    pre_command_handler,
 )
 from app.core.logging import get_log, setup_logging
 
@@ -32,6 +33,7 @@ async def main():
         if is_authorized:
             log.info("пользователь уже авторизован")
             # Подключаем handlers
+            client.add_event_handler(pre_command_handler)
             client.add_event_handler(handler_auto_clear_cache)
             client.add_event_handler(handler_help)
             client.add_event_handler(handler_list_music)
