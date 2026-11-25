@@ -1,6 +1,8 @@
+from tempfile import TemporaryDirectory
+
 import pytest
 
-from youtube_mp3_userbot.app.services.download_audio import (
+from app.services.download_audio import (
     download_audio_youtube,
 )
 
@@ -28,8 +30,10 @@ from youtube_mp3_userbot.app.services.download_audio import (
 def test_download_audio_youtube(
     url: str, expected_title: str, expected_author: str
 ) -> None:
-    video_info = download_audio_youtube(url)
-
-    assert video_info is not None
-    assert video_info["title"] == expected_title
-    assert video_info["author"] == expected_author
+    # Несовсеи правильно но лучше чем было
+    # было без temp_dir
+    with TemporaryDirectory() as temp_dir:
+        video_info = download_audio_youtube(url, temp_dir)
+        assert video_info is not None
+        assert video_info["title"] == expected_title
+        assert video_info["author"] == expected_author
