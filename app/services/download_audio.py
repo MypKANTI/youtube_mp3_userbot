@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from pytubefix import YouTube
 from pytubefix.exceptions import (
     AgeRestrictedError,
@@ -9,12 +11,15 @@ from pytubefix.exceptions import (
     VideoRegionBlocked,
 )
 
+from app.core.config import Config
 from app.core.logging import get_log
 
 log = get_log(__name__)
 
 
-def download_audio_youtube(url: str) -> dict | None:
+def download_audio_youtube(
+    url: str, output_path: str | Path | None = None
+) -> dict | None:
     """
     Функция для скачивание видео с ютуба
     и получение информации о видео
@@ -25,6 +30,9 @@ def download_audio_youtube(url: str) -> dict | None:
     Returns:
         dict: словарь с информациеё о видео
     """
+    if output_path is None:
+        output_path = Config.HOME_PATH / "music"
+
     try:
         yt = YouTube(url)
         audio_stream = yt.streams.get_audio_only()
@@ -37,7 +45,8 @@ def download_audio_youtube(url: str) -> dict | None:
         publish_date = yt.publish_date
 
         path = audio_stream.download(
-            output_path="music", filename=title.replace(".mp3", "") + ".mp3"
+            output_path=output_path,
+            filename=title.replace(".mp3", "") + ".mp3",
         )
     except AgeRestrictedError:
         log.error("Это Видео с ограниченым возрастом: %s", url)
