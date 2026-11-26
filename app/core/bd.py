@@ -41,15 +41,13 @@ class BD:
         """
         Проверка заполнены ли необходимые данные в классе
         """
-        _VALID_TUPE = (tuple, str)
-
         if self.name_pillar is None or self.name_table is None:
             return False
 
-        if not isinstance(self.name_pillar, _VALID_TUPE):
+        if not isinstance(self.name_pillar, str):
             return False
 
-        if not isinstance(self.name_table, _VALID_TUPE):
+        if not isinstance(self.name_table, str):
             return False
 
         return True
