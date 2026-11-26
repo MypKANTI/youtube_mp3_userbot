@@ -22,6 +22,7 @@ The script connects to a Telegram account and sends audio from **YouTube** video
 - 🎵 `/list_music` — list all downloaded tracks
 - 🧹 `/auto_clear_cache` <on or off> auto cache clearing
 - 📋 `/history_downloads` - history downloads
+- 🌐 `/get_my_ip` - get your IPv4
 
 ## Compatibility (personally tested)
 
