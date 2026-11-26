@@ -10,6 +10,7 @@ from telethon.tl.types import (
     DocumentAttributeAudio,
     DocumentAttributeFilename,
     InputDocument,
+    User,
 )
 
 from app.core.bd import BD
@@ -27,6 +28,7 @@ from app.utils.cache_dowloads import (
 from app.utils.cache_massage import CacheMessage
 from app.utils.counter import PATH_DATA_JSON, CounterDowload
 from app.utils.formatters import format_data, format_quantity
+from app.utils.get_my_ip import GetMyIP
 from app.utils.music_library import format_music_message, list_music_file
 from app.utils.translit import translitor
 from app.utils.validators import ValidURL
@@ -89,7 +91,7 @@ async def send_audio(
     events.NewMessage(func=lambda e: e.text.startswith("/history_downloads"))
 )
 async def handler_history_downloads(events: events.NewMessage.Event) -> None:
-    urls: tuple = BD_DOWNLOADS.get_data()
+    urls: list[tuple] = BD_DOWNLOADS.get_data()
 
     message = "10 Последних загрузок\n\n"
 
@@ -99,6 +101,28 @@ async def handler_history_downloads(events: events.NewMessage.Event) -> None:
     await events.message.delete()
 
     await events.reply(message)
+
+
+@events.register(
+    events.NewMessage(func=lambda e: e.text.startswith("/get_my_ip"))
+)
+async def handler_get_my_ip(
+    events: events.NewMessage.Event, me: User | None = None
+) -> None:
+    if me is None:
+        me = await events.client.get_me()
+
+    if not (events.is_private and events.chat_id == me.id):
+        await events.reply("эта функция доступна только в избраном")
+        return
+
+    ipv4: str | None = await GetMyIP().get_my_ip()
+
+    if ipv4 is None:
+        await events.reply("❌ IP не определён")
+        return
+
+    await events.reply(f"🌐 Ваш IPv4: {ipv4}")
 
 
 @events.register(events.NewMessage(func=lambda e: e.text.startswith("/help")))
@@ -116,6 +140,7 @@ async def handler_help(events: events.NewMessage.Event) -> None:
         "🎵 /list_music - список всей музыки\n"
         "🗄 /auto_clear_cache - авто очистка кеша\n"
         "📋 /history_downloads - история загрузок\n"
+        "🌐 /get_my_ip - получите ваш IPv4\n"
     )
     await events.reply(message)
 

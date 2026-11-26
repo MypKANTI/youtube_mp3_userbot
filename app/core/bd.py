@@ -6,7 +6,7 @@ _NAME_FILE_BD = Config.HOME_PATH / "data" / "database.db"
 
 
 class BD:
-    def __init__(self):
+    def __init__(self) -> None:
         self.conn = sqlite3.connect(_NAME_FILE_BD)
         # Имена таблицы как в базе
         self.name_table: str | None = None
@@ -52,9 +52,15 @@ class BD:
 
         return True
 
-    def get_data(self) -> tuple:
+    def get_data(self) -> list[tuple]:
         """
         Получаем данные из базы данных
+
+        Raises:
+            ValueError: name_table и name_pillar не заданы
+
+        Returns:
+            tuple: последнии 10 записей
         """
         if not self._is_valid_data():
             raise ValueError("name_table / name_pillar не заданы")

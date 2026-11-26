@@ -10,6 +10,7 @@ from app.client.handler import (
     handler_clear_cache,
     handler_clear_count,
     handler_download_mp3,
+    handler_get_my_ip,
     handler_help,
     handler_history_downloads,
     handler_list_music,
@@ -22,7 +23,7 @@ from app.core.logging import get_log, setup_logging
 log = get_log(__name__)
 
 
-async def main():
+async def main() -> None:
     try:
         setup_logging()  # Настройка логирование
         client = get_client()  # Создаём клиета
@@ -34,6 +35,7 @@ async def main():
         if is_authorized:
             log.info("пользователь уже авторизован")
             # Подключаем handlers
+            client.add_event_handler(handler_get_my_ip)
             client.add_event_handler(handler_history_downloads)
             client.add_event_handler(pre_command_handler)
             client.add_event_handler(handler_auto_clear_cache)
