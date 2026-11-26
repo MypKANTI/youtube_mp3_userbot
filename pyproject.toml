@@ -12,7 +12,7 @@ dependencies = [
     "pytubefix>=11.2.1",
     "qrcode>=8.2",
     "telethon>=1.45.0",
-    "pydantic",
+    "cryptg>=0.6.1",
 ]
 
 [tool.isort]
