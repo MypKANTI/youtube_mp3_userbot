@@ -60,7 +60,7 @@ class BD:
             raise ValueError("name_table / name_pillar не заданы")
 
         result = self.conn.execute(
-            f"SELECT {self.name_pillar} FROM {self.name_table} ORDER BY datetime ASC"
+            f"SELECT {self.name_pillar} FROM {self.name_table} ORDER BY datetime DESC LIMIT 10"
         ).fetchall()
 
         return result

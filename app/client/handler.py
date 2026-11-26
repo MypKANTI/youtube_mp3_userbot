@@ -85,6 +85,22 @@ async def send_audio(
         Stats.STATUS_SEND = False
 
 
+@events.register(
+    events.NewMessage(func=lambda e: e.text.startswith("/history_downloads"))
+)
+async def handler_history_downloads(events: events.NewMessage.Event) -> None:
+    urls: tuple = BD_DOWNLOADS.get_data()
+
+    message = "10 Последних загрузок\n\n"
+
+    for idx, url in enumerate(urls, start=1):
+        message += f"[{idx}] {url[-1]}\n"
+
+    await events.message.delete()
+
+    await events.reply(message)
+
+
 @events.register(events.NewMessage(func=lambda e: e.text.startswith("/help")))
 async def handler_help(events: events.NewMessage.Event) -> None:
     """
@@ -99,6 +115,7 @@ async def handler_help(events: events.NewMessage.Event) -> None:
         "📨 /send_log - отправка логов в чат\n"
         "🎵 /list_music - список всей музыки\n"
         "🗄 /auto_clear_cache - авто очистка кеша\n"
+        "📋 /history_downloads - история загрузок\n"
     )
     await events.reply(message)
 
