@@ -15,14 +15,15 @@
 
 ## Доступные команды
 
-- ℹ️ /help - список доступных команд
-- 📥 /do [url YouTube] или /download_mp3 [url YouTube]
-- 📊 /status - покажет статистику и статусы
-- 🗑 /clear_cache - очистит кеш
-- 🗑 /clear_count - очистка счётчика
-- 📨 /send_log - отправка логов в чат
-- 🎵 /list_music - список всей музыки
-- 🧹 /auto_clear_cache <вкл or выкл> авто очиска кеша
+- ℹ️ `/help` - список доступных команд
+- 📥 `/do` [url YouTube] или `/download_mp3` [url YouTube]
+- 📊 `/status` - покажет статистику и статусы
+- 🗑 `/clear_cache` - очистит кеш
+- 🗑 `/clear_count` - очистка счётчика
+- 📨 `/send_log` - отправка логов в чат
+- 🎵 `/list_music` - список всей музыки
+- 🧹 `/auto_clear_cache` <вкл or выкл> авто очиска кеша
+- 📋 `/history_downloads` - история загрузок
 
 ## Совместимо с (проверено лично)
 | OS         | Статус  |
