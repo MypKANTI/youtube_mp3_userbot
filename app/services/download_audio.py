@@ -44,9 +44,9 @@ def download_audio_youtube(
         likes = yt.likes
         publish_date = yt.publish_date
 
+        filename = title + ".m4a"
         path = audio_stream.download(
-            output_path=output_path,
-            filename=title.replace(".mp3", "") + ".mp3",
+            output_path=output_path, filename=filename
         )
     except AgeRestrictedError:
         log.error("Это Видео с ограниченым возрастом: %s", url)
