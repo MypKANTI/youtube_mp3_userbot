@@ -53,7 +53,7 @@ python main.py # Запуск
 ## 🚀 Установка uv
 Для macOS или Linux
 ```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
+curl -LsSf https://astral.sh/uv/install.sh | sh && source $HOME/.local/bin/env
 ```
 
 Для Windows
