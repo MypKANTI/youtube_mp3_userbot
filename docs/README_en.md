@@ -31,6 +31,7 @@ The script connects to a Telegram account and sends audio from **YouTube** video
 | Windows 11  | ✅     |
 | Windows 10  | ✅     |
 | Debian      | ✅     |
+| Ubuntu      | ✅     |
 
 ## ⚙️ Universal Installation
 This installation works for:
