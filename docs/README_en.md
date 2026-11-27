@@ -49,6 +49,7 @@ pip install -r requirements.txt
 python main.py # Run
 
 ## 🚀 Installing uv
+```
 For macOS or Linux:
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh && source $HOME/.local/bin/env
